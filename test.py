@@ -16,11 +16,13 @@ print("Emissions shape",emissions.shape)
 
 fromPos = 0
 output = []
-score = 0
+score = 1
 for key, word in enumerate(sentence):
     aux = np.multiply(transitions[fromPos][:], emissions[key][:])
     fromPos = np.argmax(aux)
     output.append(fromPos)
-    score += aux[fromPos]
+    score *= aux[fromPos]
+    print(aux[fromPos])
 
 print output
+print score

@@ -14,11 +14,11 @@ tags = ["^", "N", "V", "$"]
 print("Transitions shape",transitions.shape)
 print("Emissions shape",emissions.shape)
 
-K = 2
+K = 1
 T = 4 # Number of tags
 
 fromPos = np.array([0])
-output = np.array([[]] * K)
+output = np.array([[0]] * K)
 score = np.array([1] * K, dtype=np.float32)
 for key, word in enumerate(sentence):
     aux = np.array([], dtype=np.float32)
@@ -32,14 +32,11 @@ for key, word in enumerate(sentence):
     tempScore = np.array([1] * K, dtype=np.float32)
     for i in range(K):
         tempOutput[i] = np.append(output[source[i]].copy(), destiny[i])
-
-        # auxScore = score[source[i]].copy()
-        # auxScore *= aux[maximum[i]] # Once I use logs, function replace with addition
-        # tempScore[i] = auxScore
         tempScore[i] = score[source[i]].copy() * aux[maximum[i]]
     fromPos = destiny
     output = tempOutput
     score = tempScore
+    print(score)
     #fromPos = np.argmax(aux) # Once I use logs, functino replace with argmin()
 
 print output
