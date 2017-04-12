@@ -7,13 +7,34 @@ class Trellis:
 
     'This method loads the dictionaries for processing the sentences'
     def setDictionary(self, dictionary):
-        self.reset()
+        self._resetAll()
         self.dictionary = dictionary
+        self._processEmissions()
+
+    def _resetAll(self):
+        self.emission = None
+        self._reset()
 
     'This method resets the emission and transition matrices'
-    def reset():
-        self.emission = None
+    def _reset():
         self.transition = None
 
-    def load(sentence):
+    'Decoders rely on knowing the start state of the dictionary'
+    def getFirstState(self):
+        return
+
+    'Will generate the emission table for every state.'
+    def _processEmissions(self):
+        return
+
+    '''
+    Will load the references of the vectors in the dictionary object given the words
+    in the sentence and create the table of distributions.
+    '''
+    def load(self, sentence):
+        self._reset()
+
+        for word in sentence:
+            
+
         return

@@ -72,6 +72,7 @@ def pi(pos, transitions, emissions):
         # The scoreboard is the size of the tag list
         for key2, score in enumerate(scoreboard.list):
             #Obtain the transition for the given state and the tag
+            #TODO: Check that the getStateCode's last code matches with current key.
             tag_given_state = tag_dist[score.state.getStateCode()]
             print("Tuple",score.score, tag_given_state, tag_given_word)
             tempScores.append(score.score * tag_given_state * tag_given_word)
