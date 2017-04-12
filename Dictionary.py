@@ -16,6 +16,10 @@ class Dictionary:
     def getEmissionsByWord(self, word):
         return self.emissions[word]
 
+    ''' Determines if the word is in the dictionary '''
+    def isWordUnknown(self, word):
+        return word not in self.emissions[word]
+
     '''
     returns all transitions(for all states)
     this is structured as a dictionary where each key is a previous state and it's value is a numpy array with a value for each tag

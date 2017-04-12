@@ -6,11 +6,11 @@ import copy
 # I assume that a start is already provided
 
 # Matrix with the states in the row and the tags as columns
-transitions = np.array([ [0.0001, 0.6, 0.4, 0.0001], [0.0001, 0.4, 0.2, 0.4], [0.0001, 0.6, 0.1, 0.3], [0.0001, 0.0001, 0.0001, 1.0] ])
+transitions = np.array([ [0.0, 0.6, 0.4, 0.0], [0.0, 0.4, 0.2, 0.4], [0.0, 0.6, 0.1, 0.3], [0.0, 0.0, 0.0, 1.0] ])
 
 # Matrix with the words in the row and the tags as columns
-emissions = np.array([[0.0001, 0.45, 0.0001, 0.0001], [0.0001, 0.1, 0.7, 0.0001], [0.0001, 0.45, 0.4, 0.0001], [0.0001, 0.45, 0.4, 0.0001], [0.0001, 0.0001, 0.0001, 1.0] ])
-#emissions = np.array([ [0.0001, 0.45, 0.0001, 0.0001], [0.0001, 0.1, 0.7, 0.0001], [0.0001, 0.45, 0.4, 0.0001], [0.0001, 0.0001, 0.0001, 1.0] ])
+emissions = np.array([[0.0, 0.45, 0.0, 0.0], [0.0, 0.1, 0.7, 0.0], [0.0, 0.45, 0.4, 0.0], [0.0, 0.45, 0.4, 0.0], [0.0, 0.0, 0.0, 1.0] ])
+#emissions = np.array([ [0.0, 0.45, 0.0, 0.0], [0.0, 0.1, 0.7, 0.0], [0.0, 0.45, 0.4, 0.0], [0.0, 0.0, 0.0, 1.0] ])
 
 # We make sure that the start
 sentence = ["Fed", "raises", "interest", "rates", "STOP"]
@@ -60,13 +60,11 @@ def pi(pos, transitions, emissions):
     #    exit();
 
     tempScoreboard = copy.deepcopy(scoreboard)
-    #for score, backpointer, state_dist in itertools.izip(scores, backpointers, transitions):
     print("Scoreboard", scoreboard.list)
     # Iterate over the tags in the transition and the emissions on every tag for a given word
     # tag_dist is a list of all the transitions for all the states given tag (vector)
     # tag_given_word is the transition for a given word and tag (scalar)
     for key, (tag_dist, tag_given_word) in enumerate(list(zip(transitions.T, emissions[pos]))):
-    #for state_dist, tags_given_word in emissions[pos]:
         tempScores = []
         # Iterate over all the scores to compute the new score for the current tag.
         # The scoreboard is the size of the tag list
@@ -80,17 +78,12 @@ def pi(pos, transitions, emissions):
         # Gets the tag that gave the highest score.
         maxpos = np.argmax(tempScores)
         print("maxpos", maxpos)
-        #print(np.append(backpointers[maxpos][:], key))
-        #outputBackpointer = np.append(outputBackpointer, np.append(backpointer.copy(), maxpos), axis=0)
-        #outputBackpointer.append(np.append(backpointers[maxpos][:], key))
         # Push the new tag to the backpointer
         tempScoreboard.list[key].backpointer = scoreboard.list[maxpos].backpointer[:] + [str(key)]
         # Push the new tag to generate the new state
         tempScoreboard.list[key].pushState(str(key))
         tempScoreboard.list[key].updateScore(tempScores[maxpos])
-        # outputScores = np.append(outputScores, tempScores[maxpos])
         #outputScores.append(tempScores[maxpos])
-    #for sentence, sent_labels in itertools.izip(sentences, labels):
     return tempScoreboard
 
 scoreboardtest = pi(pos, transitions, emissions)

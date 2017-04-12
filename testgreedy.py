@@ -14,7 +14,7 @@ tags = ["^", "N", "V", "$"]
 print("Transitions shape",transitions.shape)
 print("Emissions shape",emissions.shape)
 
-K = 1
+K = 2
 T = 4 # Number of tags
 
 fromPos = np.array([0])
