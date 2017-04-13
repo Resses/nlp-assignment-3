@@ -20,9 +20,6 @@ class Dictionary(object):
     def isWordInDictionary(self, word):
         return word in self.emissions
 
-    def removeEmission(self, word):
-        del self.emissions[word]
-
     '''
     returns all transitions(for all states)
     this is structured as a dictionary where each key is a previous state and it's value is a numpy array with a value for each tag
@@ -72,7 +69,10 @@ class Dictionary(object):
         return tag_counts
 
 
-    def handleLowFrequencyWords(self):
+    def handleLowFrequencyWords(self, e):
+        return e
+
+    def divideLowFrequencyWords(self, tag_counts):
         return
 
     def getStatesList(self):
@@ -108,7 +108,7 @@ class Dictionary(object):
                 e[word][label] +=1
 
         'This method makes more sense when the class is extended'
-        self.handleLowFrequencyWords()
+        e = self.handleLowFrequencyWords(e)
 
         dict_size = len(e)
 
@@ -119,6 +119,7 @@ class Dictionary(object):
                 e[word][i] = np.log( (e[word][i] + 1) / (tag_counts[i] + dict_size))
 
         # NOTE: STILL NEED TO TAKE CARE OF UNKNOWN WORDS BY DOING THE FREQUENCY THING!!!
+        self.divideLowFrequencyWords(tag_counts)
 
         del tag_counts
         self.emissions = e
