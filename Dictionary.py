@@ -83,17 +83,7 @@ class Dictionary(object):
     structured as a dictionary where each key is a word and it's value is a numpy array with a value for each tag.
     To get e(word|tag), you do e[word][tag]
     Given: list of sentences, corresponding tags, and number of unique tags
-    Emissions are calculated as the log((count(word, tag) + 1) / (count(tag) + ?????)) - using add-1 smoothing
-    DIEGO: ???? should be the size of dictionary of words.
-
-    ****************
-    QUESTION - If I'm starting all count(word,tag) at 1, do I also need to be doing that for count(tag)
-        DIEGO: Yes. Otherwise you are providing inconsistency in the distribution. As I said, the counts should all start in zero
-        and the Add-1 should only be done when computing the log to get the probability distribution. It's much easier to track
-        the places where it's used and how it's used. You avoid adding 1 twice or none at all.
-    ***** Fix ^^^
-        DIEGO: FIXED
-
+    Emissions are calculated as the log((count(word, tag) + 1) / (count(tag) + size of dictionary)) - using add-1 smoothing
     '''
     def __calculate_emissions(self, sentences, sentences_tags, num_tags):
         e = {}
@@ -139,7 +129,7 @@ class Dictionary(object):
     def __calculate_transitions(self, sentences_tags, num_tags, n):
         q = {}
         for state in itertools.product(range(-1,num_tags), repeat = n):
-            q[','.join(str(tag) for tag in state)] = np.ones(num_tags)
+            q[','.join(str(tag) for tag in state)] = np.zeros(num_tags)
 
         for sent_tags in sentences_tags:  # for each sentence's list of tags
             sent_tags = ([-1] * n) + sent_tags  #appending n '-1' tags to correspond to prior states/tags for the first word(s).
@@ -150,7 +140,7 @@ class Dictionary(object):
                 q[prior_state][current_state] += 1
 
         for prior_state, tag_list in q.iteritems():
-            q[prior_state] = np.log(tag_list/np.sum(tag_list))
+            q[prior_state] = np.log( (tag_list + 1) / (np.sum(tag_list) + num_tags) )
 
         self.transitions = q
         return

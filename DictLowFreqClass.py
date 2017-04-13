@@ -46,14 +46,6 @@ class DictLowFreqClass(Dictionary):
                 return className
         return "other"
 
-    # '''
-    # This method runs over the testing set. Detects words that are not in the
-    # dictionary, have a regular expression and replaces them with the corresponding
-    # class
-    # '''
-    # def preProcessTestingData(sentences):
-    #     return
-
     def getEmissionsByWord(self, word):
         if self.isWordInDictionary(word):
             return self.emissions[word]
