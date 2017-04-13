@@ -2,8 +2,8 @@ class Trellis:
 
     def __init__(self):
         self.dictionary = None
-        self.emission = None
-        self.transition = None
+        self.emissions = None
+        self.transitions = None
 
     'This method loads the dictionaries for processing the sentences'
     def setDictionary(self, dictionary):
@@ -16,12 +16,12 @@ class Trellis:
 
     'This method resets the emission and transition matrices'
     def _resetAll(self):
-        self.emission = None
-        self._resetTransitions()
+        self.transitions = None
+        self._resetEmissions()
 
     'This method resets the transition matrix'
-    def _resetTransitions():
-        self.transition = None
+    def _resetEmissions():
+        self.emissions = None
 
     '''
     Decoders rely on knowing the start state of the dictionary. This method will
@@ -35,7 +35,7 @@ class Trellis:
     This table is only required to generate once, when the dictionary is loaded.
     '''
     def _processTransitions(self):
-        self.transition = np.array([])
+        self.transitions = np.array([])
         for state_dist in self.dictionary.getTransitions():
             np.append( self.transitions, state_dist )
 
@@ -44,7 +44,7 @@ class Trellis:
     in the sentence and create the table of distributions.
     '''
     def load(self, sentence):
-        self._resetTransitions()
+        self._resetEmissions()
 
         for word in sentence:
 

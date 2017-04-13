@@ -1,4 +1,4 @@
-class Dictionary:
+class Dictionary(object):
 
     def __init__(self):
         self.emissions = None
@@ -17,8 +17,11 @@ class Dictionary:
         return self.emissions[word]
 
     ''' Determines if the word is in the dictionary '''
-    def isWordUnknown(self, word):
-        return word not in self.emissions[word]
+    def isWordInDictionary(self, word):
+        return word in self.emissions
+
+    def removeEmission(self, word):
+        del self.emissions[word]
 
     '''
     returns all transitions(for all states)
@@ -52,9 +55,9 @@ class Dictionary:
     This calculates the transitions and emissions and stores them in the member variables
     '''
     def process(self, sentences, sentences_tags, tag_list, n_prev):
-        num_tags = len(tag_list)
-        self.__calculate_transitions(sentences_tags, num_tags, n_prev)
-        self.__calculate_emissions(sentences, sentences_tags, num_tags)
+        self.num_tags = len(tag_list)
+        self.__calculate_transitions(sentences_tags, self.num_tags, n_prev)
+        self.__calculate_emissions(sentences, sentences_tags, self.num_tags)
         return
 
     '''
@@ -67,6 +70,13 @@ class Dictionary:
             for tag in sent_tags:
                 tag_counts[tag] +=1
         return tag_counts
+
+
+    def handleLowFrequencyWords(self):
+        return
+
+    def getStatesList(self):
+        return list(q.keys())
 
     '''
     This method, called in process, calculates the emissions,
@@ -96,6 +106,9 @@ class Dictionary:
                 if not word in e:
                     e[word] = np.zeros(num_tags)
                 e[word][label] +=1
+
+        'This method makes more sense when the class is extended'
+        self.handleLowFrequencyWords()
 
         dict_size = len(e)
 
