@@ -1,4 +1,7 @@
+from Dictionary import Dictionary
+import itertools
 import re
+import numpy as np
 
 class DictLowFreqClass(Dictionary):
 

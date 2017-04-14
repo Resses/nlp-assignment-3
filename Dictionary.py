@@ -1,3 +1,6 @@
+import itertools
+import numpy as np
+
 class Dictionary(object):
 
     def __init__(self):
