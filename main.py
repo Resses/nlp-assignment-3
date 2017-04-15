@@ -5,7 +5,7 @@ import re
 from argparse import ArgumentParser
 
 from DictLowFreqClass import DictLowFreqClass
-from Dictionary import Dictionary
+from Dictionary import Dictionary, Smoothing
 from Trellis import Trellis
 from GreedyDecoder import GreedyDecoder
 from ViterbiDecoder import ViterbiDecoder
@@ -87,6 +87,13 @@ parser.add_argument("-b", "--beam-width", dest = "K",
 parser.add_argument('--greedy', action='store_true')
 parser.add_argument('--viterby', action='store_true')
 
+parser.add_argument('--add1', dest='add1', action='store_true')
+parser.add_argument('--linear', dest='linear', action='store_true')
+
+parser.add_argument('--most-common', dest='most_common', action='store_true')
+parser.add_argument('--unknown-classes', dest='unknown_classes', action='store_true')
+
+
 parser.add_argument("-f", "--output", dest = "filename",
     required = True, help = "Filename to store the output")
 
@@ -96,9 +103,16 @@ args = parser.parse_args()
 n_prev = int(args.n_prev)
 K = int(args.K)
 if args.greedy == args.viterby:
-    print("Pick an algorithm")
+    print("Pick only one algorithm")
     exit()
 
+if args.add1 == args.linear:
+    print("Pick only one smoothing")
+    exit()
+
+if args.most_common == args.unknown_classes:
+    print("Pick only one UNK method")
+    exit()
 
 'Load train and dev data'
 train_x, train_y, tag_list = read_data('data/train_x.csv', 'data/train_y.csv')
@@ -106,9 +120,22 @@ dev_x, dev_y, tag_list = read_data('data/dev_x.csv', 'data/dev_y.csv')
 #test_x = read_data('data/test_x.csv')
 
 'Process the data in the dictionary'
-d = DictLowFreqClass()
-#d = Dictionary()
-d.process(train_x, train_y, tag_list, n_prev = n_prev)
+d = None
+if args.most_common:
+    d = Dictionary()
+else:
+    d = DictLowFreqClass()
+
+lambdas = None
+if n_prev == 1:
+    lambdas = [0.8, 0.2]
+elif n_prev == 2:
+    lambdas = [0.4, 0.4, 0.2]
+
+if args.add1:
+    d.process(train_x, train_y, tag_list, n_prev = n_prev, smoothing = Smoothing.ADD1, lambdas = lambdas)
+else:
+    d.process(train_x, train_y, tag_list, n_prev = n_prev, smoothing = Smoothing.LINEAR, lambdas = lambdas)
 
 'Creates Trellis'
 trellis = Trellis()
