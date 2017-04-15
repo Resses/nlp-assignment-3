@@ -40,6 +40,14 @@ class Score:
     def __str__(self):
         return "Backpointer: " + ','.join(self.backpointer) + " Score: " + str(self.score)
 
+    def __cmp__(self, other):
+        if self.score > other.score:
+            return 1
+        elif self.score == other.score:
+            return 0
+        else:
+            return -1
+
 class Scoreboard:
 
     def __init__(self, statesize, tagsize):
@@ -87,5 +95,6 @@ def pi(pos, transitions, emissions):
     return tempScoreboard
 
 scoreboardtest = pi(pos, transitions, emissions)
+print ("Max",str(max(scoreboardtest.list)))
 for i in scoreboardtest.list:
     print (i)

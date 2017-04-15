@@ -7,6 +7,7 @@ from DictLowFreqClass import DictLowFreqClass
 from Dictionary import Dictionary
 from Trellis import Trellis
 from GreedyDecoder import GreedyDecoder
+from ViterbiDecoder import ViterbiDecoder
 
 '''
 This methods accepts:
@@ -68,20 +69,22 @@ train_x, train_y, tag_list = read_data('data/train_x.csv', 'data/train_y.csv')
 test_x = read_data('data/test_x.csv')
 
 d = DictLowFreqClass()
-d.process(train_x, train_y, tag_list, n_prev = 1)
+d.process(train_x, train_y, tag_list, n_prev = 2)
 
 trellis = Trellis()
-greedy = GreedyDecoder(n_prev = 1, tag_size = len(tag_list), K=1)
-#viterby = ViterbyDecoder()
+#greedy = GreedyDecoder(n_prev = 1, tag_size = len(tag_list), K=1)
+
+viterbi = ViterbiDecoder(n_prev = 2, tag_size = len(tag_list))
 
 trellis.setDictionary(d)
-greedy.setTrellis(trellis)
-#viterby.setTrellis(trellis)
+#greedy.setTrellis(trellis)
+viterbi.setTrellis(trellis)
 output = []
 #for sentence in test_x:
 
-output.append( greedy.process(train_x[0]) )
-    #viterbyOutput.push( viterby.process(sentence) )
+#output.append( greedy.process(train_x[0]) )
+output.append( viterbi.process(train_x[2]) )
+    #viterbiOutput.push( viterbi.process(sentence) )
 
 #print(train_x[0])
 print(output)
