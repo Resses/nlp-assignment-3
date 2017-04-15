@@ -43,4 +43,5 @@ class GreedyDecoder:
             #print(score)
 
         #print score
-        return output[ np.argmax(score) ][1:]
+        returnPos = np.argmax(score)
+        return output[ returnPos ][1:], score[returnPos]

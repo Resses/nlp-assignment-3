@@ -107,6 +107,7 @@ dev_x, dev_y, tag_list = read_data('data/dev_x.csv', 'data/dev_y.csv')
 
 'Process the data in the dictionary'
 d = DictLowFreqClass()
+#d = Dictionary()
 d.process(train_x, train_y, tag_list, n_prev = n_prev)
 
 'Creates Trellis'
@@ -121,12 +122,26 @@ else:
 
 decoder.setTrellis(trellis)
 
-output = []
+sequence_list = []
+score_list = []
 print("Processing sentences")
 for key, sentence in enumerate(dev_x):
     print(key)
-    output.append( decoder.process(sentence) )
+    sequence, score = decoder.process(sentence)
+    sequence_list.append(sequence)
+    score_list.append(score)
 
-#print(train_x[0])
+
+totalUnknown = 0
+predictedUnknown = 0
+for sentence, labels, predictions in itertools.izip(dev_x, dev_y, sequence_list):
+    for word, label, prediction in itertools.izip(sentence, labels, predictions):
+        if not d.isWordInDictionary(word):
+            totalUnknown += 1
+            if str(label) == prediction:
+                predictedUnknown += 1
+print("Total Unknown:" +  str(totalUnknown))
+print("Predicted unknown: " + str(predictedUnknown / float(totalUnknown)))
+
 print("Saving in " + args.filename)
-generate_file(output, args.filename)
+generate_file(sequence_list, args.filename)

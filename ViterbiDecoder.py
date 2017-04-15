@@ -53,7 +53,8 @@ class ViterbiDecoder:
         pos = len(sentence)-1
         scoreboardtest = self.pi(pos, self.trellis.transitions, self.trellis.emissions)
         #print ("Max",str(max(scoreboardtest.list)))
-        return max(scoreboardtest.list).backpointer[1:]
+        maximum = max(scoreboardtest.list)
+        return maximum.backpointer[1:], maximum.score
 
     def pi(self, pos, transitions, emissions):
         'Backpointer is the sequence of positions chosen and score is the computed score for the last column'
@@ -66,7 +67,7 @@ class ViterbiDecoder:
         #    exit();
 
         tempScoreboard = copy.deepcopy(scoreboard)
-        #print("Scoreboard", scoreboard.list)
+
         # Iterate over the tags in the transition and the emissions on every tag for a given word
         # tag_dist is a list of all the transitions for all the states given tag (vector)
         # tag_given_word is the transition for a given word and tag (scalar)
@@ -77,19 +78,13 @@ class ViterbiDecoder:
             for key2, score in enumerate(scoreboard.list):
                 #Obtain the transition for the given state and the tag
                 #TODO: Check that the getStateCode's last code matches with current key.
-                #tag_given_state = tag_dist[score.state.getStateCode()]
                 tag_given_state = tag_dist[self.trellis.getStatePosition(str(score.state))]
-                #print("Tuple",score.score, tag_given_state, tag_given_word)
-                #tempScores.append(score.score * tag_given_state * tag_given_word)
                 tempScores.append(score.score + tag_given_state + tag_given_word)
-            #print("tempscores",tempScores)
             # Gets the tag that gave the highest score.
             maxpos = np.argmax(tempScores)
-            #print("maxpos", maxpos)
             # Push the new tag to the backpointer
             tempScoreboard.list[key].backpointer = scoreboard.list[maxpos].backpointer[:] + [str(key)]
             # Push the new tag to generate the new state
             tempScoreboard.list[key].pushState(str(key))
             tempScoreboard.list[key].updateScore(tempScores[maxpos])
-            #outputScores.append(tempScores[maxpos])
         return tempScoreboard
