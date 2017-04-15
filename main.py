@@ -100,9 +100,10 @@ if args.greedy == args.viterby:
     exit()
 
 
-'Load train and test data'
+'Load train and dev data'
 train_x, train_y, tag_list = read_data('data/train_x.csv', 'data/train_y.csv')
-test_x = read_data('data/test_x.csv')
+dev_x, dev_y, tag_list = read_data('data/dev_x.csv', 'data/dev_y.csv')
+#test_x = read_data('data/test_x.csv')
 
 'Process the data in the dictionary'
 d = DictLowFreqClass()
@@ -121,7 +122,9 @@ else:
 decoder.setTrellis(trellis)
 
 output = []
-for sentence in test_x[0:3]:
+print("Processing sentences")
+for key, sentence in enumerate(dev_x):
+    print(key)
     output.append( decoder.process(sentence) )
 
 #print(train_x[0])
