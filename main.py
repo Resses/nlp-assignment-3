@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import itertools
 import re
+from argparse import ArgumentParser
 
 from DictLowFreqClass import DictLowFreqClass
 from Dictionary import Dictionary
@@ -65,26 +66,64 @@ def read_data(data_file, label_file = None):
         sentences, sentences_tags = get_sentences(list(data['word']), labels, tag_delim = docstart_tag)
         return sentences, sentences_tags, tag_list
 
+def generate_file(output, filename):
+    f = open(filename,'w')
+    f.write("id,tag\n")
+    count = 0
+    for sentence in output:
+        for word in sentence:
+            f.write(str(count) + ",\"" + tag_list[int(word)] + "\"\n")
+            count += 1
+    f.close()
+
+parser = ArgumentParser()
+
+parser.add_argument("-s", "--states", dest = "n_prev",
+    required = True, help = "Number of states in the HMM")
+
+parser.add_argument("-b", "--beam-width", dest = "K",
+    default = 2, help = "Width of the beam search (default: 2)")
+
+parser.add_argument('--greedy', action='store_true')
+parser.add_argument('--viterby', action='store_true')
+
+parser.add_argument("-f", "--output", dest = "filename",
+    required = True, help = "Filename to store the output")
+
+
+args = parser.parse_args()
+
+n_prev = int(args.n_prev)
+K = int(args.K)
+if args.greedy == args.viterby:
+    print("Pick an algorithm")
+    exit()
+
+
+'Load train and test data'
 train_x, train_y, tag_list = read_data('data/train_x.csv', 'data/train_y.csv')
 test_x = read_data('data/test_x.csv')
 
+'Process the data in the dictionary'
 d = DictLowFreqClass()
-d.process(train_x, train_y, tag_list, n_prev = 2)
+d.process(train_x, train_y, tag_list, n_prev = n_prev)
 
+'Creates Trellis'
 trellis = Trellis()
-#greedy = GreedyDecoder(n_prev = 1, tag_size = len(tag_list), K=1)
-
-viterbi = ViterbiDecoder(n_prev = 2, tag_size = len(tag_list))
-
 trellis.setDictionary(d)
-#greedy.setTrellis(trellis)
-viterbi.setTrellis(trellis)
-output = []
-#for sentence in test_x:
 
-#output.append( greedy.process(train_x[0]) )
-output.append( viterbi.process(train_x[2]) )
-    #viterbiOutput.push( viterbi.process(sentence) )
+'Loads the Greedy or the Viterbi decoder and sets the trellis'
+if args.greedy:
+    decoder = GreedyDecoder(n_prev = n_prev, tag_size = len(tag_list), K = K)
+else:
+    decoder = ViterbiDecoder(n_prev = n_prev, tag_size = len(tag_list))
+
+decoder.setTrellis(trellis)
+
+output = []
+for sentence in test_x[0:3]:
+    output.append( decoder.process(sentence) )
 
 #print(train_x[0])
-print(output)
+print("Saving in " + args.filename)
+generate_file(output, args.filename)

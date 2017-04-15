@@ -53,7 +53,7 @@ class ViterbiDecoder:
         pos = len(sentence)-1
         scoreboardtest = self.pi(pos, self.trellis.transitions, self.trellis.emissions)
         #print ("Max",str(max(scoreboardtest.list)))
-        return max(scoreboardtest.list).backpointer
+        return max(scoreboardtest.list).backpointer[1:]
 
     def pi(self, pos, transitions, emissions):
         'Backpointer is the sequence of positions chosen and score is the computed score for the last column'

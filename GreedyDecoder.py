@@ -42,5 +42,5 @@ class GreedyDecoder:
             score = tempScore
             #print(score)
 
-        print score
-        return output[ np.argmax(score) ]
+        #print score
+        return output[ np.argmax(score) ][1:]
