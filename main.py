@@ -68,10 +68,10 @@ train_x, train_y, tag_list = read_data('data/train_x.csv', 'data/train_y.csv')
 test_x = read_data('data/test_x.csv')
 
 d = DictLowFreqClass()
-d.process(train_x, train_y, tag_list, n_prev = 2)
+d.process(train_x, train_y, tag_list, n_prev = 1)
 
 trellis = Trellis()
-greedy = GreedyDecoder(tag_size = 2)
+greedy = GreedyDecoder(n_prev = 1, tag_size = len(tag_list), K=1)
 #viterby = ViterbyDecoder()
 
 trellis.setDictionary(d)
