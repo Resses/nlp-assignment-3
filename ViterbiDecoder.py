@@ -35,9 +35,9 @@ class Scoreboard:
 
     def __init__(self, statesize, tagsize):
         self.list = []
-        self.list.append(Score(0, "-1", statesize))
+        self.list.append(Score(0, -1, statesize))
         for i in range(tagsize-1):
-            self.list.append(Score(0, "-1", statesize))
+            self.list.append(Score(0, -1, statesize))
 
 class ViterbiDecoder:
 
@@ -83,7 +83,7 @@ class ViterbiDecoder:
             # Gets the tag that gave the highest score.
             maxpos = np.argmax(tempScores)
             # Push the new tag to the backpointer
-            tempScoreboard.list[key].backpointer = scoreboard.list[maxpos].backpointer[:] + [str(key)]
+            tempScoreboard.list[key].backpointer = scoreboard.list[maxpos].backpointer[:] + [int(key)]
             # Push the new tag to generate the new state
             tempScoreboard.list[key].pushState(str(key))
             tempScoreboard.list[key].updateScore(tempScores[maxpos])

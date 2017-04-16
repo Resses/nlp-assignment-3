@@ -18,7 +18,7 @@ class GreedyDecoder:
         #initState = ','.join(["-1"] * self.tag_size)
         initState = State(k=self.n_prev)
         fromPos = np.array([initState])
-        output = np.array([[initState.getLastTag()]] * self.K)
+        output = np.array([[int(initState.getLastTag())]] * self.K)
         score = np.array([0] * self.K, dtype=np.float32)
         for key, word in enumerate(sentence):
             aux = np.array([], dtype=np.float32)
