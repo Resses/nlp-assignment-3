@@ -7,8 +7,16 @@ class DictLowFreqClass(Dictionary):
 
     def __init__(self, threshold = 7):
         super(Dictionary, self).__init__()
-        self.classes = ["twoDigitNum", "containsDigitAndAlpha", "initCap", "other"]
-        self.regexs = [re.compile(r"(\d\d)"), re.compile(r"^(\w+-\w+)"), re.compile(r"^([A-Z]\w+)$"), re.compile(r"(.*)")]
+        self.classes = ["twoDigitNum", "containsDigitAndAlpha",
+                        "containsDigitsAndComma", "othernum",
+                        "allCap", "capPeriod",
+                        "initCap", "lowercase",
+                        "other"]
+        self.regexs = [re.compile(r"^(\d\d)$"), re.compile(r"^(\w+-\w+)$"),
+                        re.compile(r"^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$"), re.compile(r"^(\d+)(\.\d+)?$"),
+                        re.compile(r"^([A-Z]+)$"), re.compile(r"^([A-Z]+\.)$"),
+                        re.compile(r"^([A-Z]\w+)$"), re.compile(r"^(\w+)$"),
+                        re.compile(r"(.*)")]
         self.unknowns = None
         self.threshold = threshold
 
